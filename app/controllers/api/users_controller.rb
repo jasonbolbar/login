@@ -8,6 +8,7 @@ class Api::UsersController < Api::ApplicationController
   # GET /users
   # GET /users.json
   def index
+    set_records_count_header @application.users
     @users = @application.users.offset(params[:offset] || 0).limit(params[:limit] || 6).all
     render json: @users
   end

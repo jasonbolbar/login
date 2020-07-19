@@ -1,38 +1,45 @@
 import React, {useState,useEffect} from 'react';
 import _ from 'lodash'
-import axios from '../../services/axios'
-import {Card, CardHeader, CardTitle, CardText, CardBody, CardDeck} from "reactstrap";
+import PropTypes from 'prop-types';
+import GridPagination from '../grid-pagination/GridPagination';
 
-const Grid = () => {
+const Grid = ({ promise, body, offset }) => {
 
-    const [applications, setApplications] = useState([]);
+    const [data, setData] = useState([]);
+    const [total, setTotal] = useState(0);
     const [dataFetched, setDataFetched] = useState(false);
 
+    const fetchDataSet = (currentPage) => promise(((currentPage - 1) * offset), offset)
+        .then((response) => {
+            setData(response.data);
+            return response;
+        });
+
     useEffect(()=>{
-        if (_.isEmpty(applications) && !dataFetched) {
-            axios.get('/applications')
-                .then(({data}) => setApplications(data))
-                .finally(() => setDataFetched(true))
+        if (_.isEmpty(data) && !dataFetched) {
+            fetchDataSet(1).then(({headers}) => (setTotal(parseInt(headers['pagination-total'],10))))
+                .finally(() => setDataFetched(true));
         }
-    }, [])
+    }, []);
 
     return (
         <div>
-            {applications.map(application => (
-                <Card key={application.id}>
-                    <CardHeader className=""><h3>{application.name}</h3></CardHeader>
-                    <CardBody>
-                        <CardText className="font-weight-bold m-0">Client ID:</CardText>
-                        <CardText className="m-0">{application.uid}</CardText>
-                        <CardText className="font-weight-bold m-0">Client Secret:</CardText>
-                        <CardText className="m-0">{application.secret}</CardText>
-                        <CardText className="font-weight-bold m-0">Redirect uri:</CardText>
-                        <CardText className="m-0"><a href={application.redirect_uri}>{application.redirect_uri}</a></CardText>
-                    </CardBody>
-                </Card>
-            ))}
+            <div className="grid-container">
+                {data.map(body)}
+            </div>
+            <GridPagination total={total} offset={offset} onPageChange={fetchDataSet}/>
         </div>
     )
-}
+};
+
+Grid.propTypes = {
+    body: PropTypes.func.isRequired,
+    promise: PropTypes.func.isRequired,
+    offset: PropTypes.number
+};
+
+Grid.defaultProps = {
+    offset: 6
+};
 
 export default Grid

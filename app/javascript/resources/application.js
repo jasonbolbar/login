@@ -1,2 +1,2 @@
-import('../../assets/stylesheets/application.scss')
-import('./main')
+import('../../assets/stylesheets/application.scss');
+import('./main');

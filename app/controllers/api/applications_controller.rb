@@ -1,13 +1,14 @@
 class Api::ApplicationsController < Api::ApplicationController
   include Api::SuperAdminAuthorize
   before_action :authenticate_user
-  before_action :super_admin_authorize
+  before_action :super_admin_authorize, except: [:index]
   before_action :set_application, only: [:show, :update, :destroy]
 
   # GET /applications
   # GET /applications.json
   def index
-    @applications = Application.offset(params[:offset] || 0).limit(params[:limit] || 6).all
+    set_records_count_header applications_scope
+    @applications = applications_scope.offset(params[:offset] || 0).limit(params[:limit] || 6).all
     render json: @applications
   end
 
@@ -55,5 +56,9 @@ class Api::ApplicationsController < Api::ApplicationController
     # Only allow a list of trusted parameters through.
     def application_params
       params.require(:application).permit([:name, :redirect_uri])
+    end
+
+    def applications_scope
+      current_user.is_admin ? Application.all : user.applications
     end
 end

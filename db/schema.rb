@@ -84,7 +84,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_015916) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "last_name"
-    t.string "#<ActiveRecord::ConnectionAdapters::SQLite3::TableDefinition:0x00007f8d96444758>"
+    t.string "#<ActiveRecord::ConnectionAdapters::SQLite3::TableDefinition:0x00007fd7692bf0c8>"
   end
 
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
