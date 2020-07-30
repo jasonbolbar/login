@@ -1,0 +1,12 @@
+.navbar {
+  @media (min-width: 576px) {
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+  }
+}
+.layout-container {
+  @media (min-width: 576px) {
+    padding-top: 2vh;
+  }
+}

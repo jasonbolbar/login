@@ -36,7 +36,6 @@ const GridPagination = ({total,offset, onPageChange, maxItemsSize}) => {
             <PaginationItem disabled={currentPage === 1}>
                 <PaginationLink
                     previous
-                    href="#"
                     onClick={() => setPage(currentPage - 1)}
                 />
             </PaginationItem>
@@ -44,7 +43,6 @@ const GridPagination = ({total,offset, onPageChange, maxItemsSize}) => {
                 generatePageSet().map(page => (
                     <PaginationItem key={page} active={page === currentPage}>
                         <PaginationLink
-                            href="#"
                             onClick={()=> setPage(page)}
                         >
                             {page}
@@ -55,14 +53,12 @@ const GridPagination = ({total,offset, onPageChange, maxItemsSize}) => {
             <PaginationItem disabled={getLastPage() < maxItemsSize || currentPage === getLastPage() }>
                 <PaginationLink
                     next
-                    href="#"
                     onClick={() => setPage(currentPage + 1)}
                 />
             </PaginationItem>
             <PaginationItem disabled={getLastPage() < maxItemsSize || currentPage === getLastPage()}>
                 <PaginationLink
                     last
-                    href="#"
                     onClick={() => setPage(getLastPage())}
                 />
             </PaginationItem>

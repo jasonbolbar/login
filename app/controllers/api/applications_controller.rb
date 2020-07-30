@@ -7,9 +7,9 @@ class Api::ApplicationsController < Api::ApplicationController
   # GET /applications
   # GET /applications.json
   def index
-    set_records_count_header applications_scope
-    @applications = applications_scope.offset(params[:offset] || 0).limit(params[:limit] || 6).all
-    render json: @applications
+    set_records_count_header filterBySearch
+    @applications = filterBySearch.offset(params[:offset] || 0).limit(params[:limit] || 6)
+    render json: @applications.all
   end
 
   # GET /applications/1
@@ -44,13 +44,12 @@ class Api::ApplicationsController < Api::ApplicationController
   # DELETE /applications/1.json
   def destroy
     @application.destroy
-
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_application
-      @application = Application.find(params[:id])
+      @application = applications_scope.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
@@ -60,5 +59,10 @@ class Api::ApplicationsController < Api::ApplicationController
 
     def applications_scope
       current_user.is_admin ? Application.all : user.applications
+    end
+
+    def filterBySearch
+      params[:searchTerm].present? ? applications_scope.where("name LIKE ?","%#{params[:searchTerm]}%")
+          : applications_scope
     end
 end

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Session from "./session";
 
 const instance = axios.create({
     baseURL: '/api',
@@ -8,6 +9,14 @@ const instance = axios.create({
         'X-CSRF-Token': document.head.querySelector('meta[name="csrf-token"]').content
     }
 });
+
+instance.interceptors.response.use(response => response, error => {
+    if (error.response.status === 401) {
+        Session.logout();
+        window.location.href = '/login';
+    }
+    return error
+})
 
 export const setBearerToken = (token) => {
     instance.defaults.headers['Authorization'] = `Bearer ${token}`;
