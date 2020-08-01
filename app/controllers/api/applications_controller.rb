@@ -7,8 +7,8 @@ class Api::ApplicationsController < Api::ApplicationController
   # GET /applications
   # GET /applications.json
   def index
-    set_records_count_header filterBySearch
-    @applications = filterBySearch.offset(params[:offset] || 0).limit(params[:limit] || 6)
+    set_records_count_header(filterBySearch(applications_scope))
+    @applications = filterBySearch(applications_scope).offset(params[:offset] || 0).limit(params[:limit] || 6)
     render json: @applications.all
   end
 
@@ -26,7 +26,7 @@ class Api::ApplicationsController < Api::ApplicationController
     if @application.save
       render json: @application, status: :created, location: api_application_path(@application)
     else
-      render json: @application.errors, status: :unprocessable_entity
+      render json: @application.errors.full_messages.join(', '), status: :unprocessable_entity
     end
   end
 
@@ -36,7 +36,7 @@ class Api::ApplicationsController < Api::ApplicationController
     if @application.update(application_params)
       render json: @application, status: :ok, location: api_application_path(@application)
     else
-      render json: @application.errors, status: :unprocessable_entity
+      render json: @application.errors.full_messages.join(', '), status: :unprocessable_entity
     end
   end
 
@@ -58,11 +58,8 @@ class Api::ApplicationsController < Api::ApplicationController
     end
 
     def applications_scope
-      current_user.is_admin ? Application.all : user.applications
+      (current_user.is_admin ? Application.all : user.applications).order(created_at: :desc)
     end
 
-    def filterBySearch
-      params[:searchTerm].present? ? applications_scope.where("name LIKE ?","%#{params[:searchTerm]}%")
-          : applications_scope
-    end
+
 end

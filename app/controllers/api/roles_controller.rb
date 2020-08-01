@@ -8,8 +8,8 @@ class Api::RolesController < Api::ApplicationController
   # GET /roles
   # GET /roles.json
   def index
-    set_records_count_header @application.roles
-    @roles = @application.roles.offset(params[:offset] || 0).limit(params[:limit] || 6).all
+    set_records_count_header filterBySearch @application.roles
+    @roles = filterBySearch(@application.roles).offset(params[:offset] || 0).limit(params[:limit] || 6).all
     render json: @roles
   end
 

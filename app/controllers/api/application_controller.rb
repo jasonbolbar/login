@@ -9,4 +9,8 @@ class Api::ApplicationController < ActionController::API
   def set_records_count_header(instance)
     response.set_header('Pagination-Total', instance.count)
   end
+
+  def filterBySearch(scope)
+    params[:searchTerm].present? ? scope.where("name LIKE ?","%#{params[:searchTerm]}%") : scope
+  end
 end

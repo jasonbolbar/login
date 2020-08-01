@@ -15,7 +15,7 @@ instance.interceptors.response.use(response => response, error => {
         Session.logout();
         window.location.href = '/login';
     }
-    return error
+    return Promise.reject(error);
 })
 
 export const setBearerToken = (token) => {
